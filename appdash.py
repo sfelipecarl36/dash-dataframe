@@ -1,3 +1,4 @@
+import sv_ttk
 import tkinter as tk
 from tkinter import ttk
 import pandas as panda
@@ -9,16 +10,20 @@ import matplotlib as plt
 i = 0
 y = 0
 
-diretorio = 'C:\\Users\\felip\\Desktop\\Treinamento Python\\'
+#Felipe Carlos Rabelo da Silva
+
+#
+
+diretorio = ''
 
 def ler_df():
     if(os.path.exists('dataframe.csv')==True):
-        return panda.read_csv('dataframe.csv', encoding='latin-1')
+        return panda.read_csv('dataframe.csv', encoding='utf-8')
 
 window = tk.Tk() # Criando a Janela
 window['bg']='#008de4' #Definindo cor de fundo App
 window.title('Dash DataFrame')# Definindo o título App
-window.iconbitmap('C:\\Users\\felip\\Desktop\\Treinamento Python\\icon.ico') # Definindo o Ícone App
+window.iconbitmap('icon.ico') # Definindo o Ícone App
 
 colunas = {}
 
@@ -149,8 +154,9 @@ def janelaAdiconaRegistro():
         geometry = str(j_x)+'x'+str(j_y)+'+'+str(p_x)+'+'+str(p_y)
         window_addRegistro.geometry(geometry)
     
-        btn_criaregistro = tk.Button(window_addRegistro, text='Registrar', command=lambda: criaRegistro(window_addRegistro,entrys['Entry_1'].get(),entrys['Entry_2'].get(),entrys['Entry_3'].get(),entrys['Entry_4'].get(),entrys['Entry_5'].get(),entrys['Entry_6'].get(),entrys['Entry_7'].get(),entrys['Entry_8'].get(),entrys['Entry_9'].get(),entrys['Entry_10'].get(),entrys['Entry_11'].get(),entrys['Entry_12'].get(),entrys['Entry_13'].get(),entrys['Entry_14'].get(),entrys['Entry_15'].get()),bg='#ffffff', fg='#008de4', font='Arial 13',padx=12,bd=0)
+        btn_criaregistro = tk.Button(window_addRegistro, text='Registrar', command=lambda: criaRegistro(window_addRegistro,entrys['Entry_1'].get(),entrys['Entry_2'].get(),entrys['Entry_3'].get(),entrys['Entry_4'].get(),entrys['Entry_5'].get(),entrys['Entry_6'].get(),entrys['Entry_7'].get(),entrys['Entry_8'].get(),entrys['Entry_9'].get(),entrys['Entry_10'].get(),entrys['Entry_11'].get(),entrys['Entry_12'].get(),entrys['Entry_13'].get(),entrys['Entry_14'].get(),entrys['Entry_15'].get()), fg='#008de4', font='Arial 13',padx=12,bd=0)
         btn_criaregistro.place(relx=0.5,rely=0.07,anchor='center')
+        btn_criaregistro.bind("<Return>", (lambda event: criaRegistro(window_addRegistro,entrys['Entry_1'].get(),entrys['Entry_2'].get(),entrys['Entry_3'].get(),entrys['Entry_4'].get(),entrys['Entry_5'].get(),entrys['Entry_6'].get(),entrys['Entry_7'].get(),entrys['Entry_8'].get(),entrys['Entry_9'].get(),entrys['Entry_10'].get(),entrys['Entry_11'].get(),entrys['Entry_12'].get(),entrys['Entry_13'].get(),entrys['Entry_14'].get(),entrys['Entry_15'].get())))
         
         global i
         global y
@@ -165,6 +171,7 @@ def janelaAdiconaRegistro():
                 label = tk.Label(window_addRegistro, bd=0, text=coluna,bg='#008de4',fg='#ffffff', font='Arial 11 bold',width=14)
                 entrys['Entry_'+str(i)] = tk.Entry(window_addRegistro, bd=0, name='e'+str(i),bg='#ffffff',fg='#008de4', font='Arial 12 bold', justify='center',width=16)
                 val_entry = entrys['Entry_'+str(i)].get()
+                entrys['Entry_'+str(i)].bind("<Return>", (lambda event: criaRegistro(window_addRegistro,entrys['Entry_1'].get(),entrys['Entry_2'].get(),entrys['Entry_3'].get(),entrys['Entry_4'].get(),entrys['Entry_5'].get(),entrys['Entry_6'].get(),entrys['Entry_7'].get(),entrys['Entry_8'].get(),entrys['Entry_9'].get(),entrys['Entry_10'].get(),entrys['Entry_11'].get(),entrys['Entry_12'].get(),entrys['Entry_13'].get(),entrys['Entry_14'].get(),entrys['Entry_15'].get())))
                 entrys['Entry_'+str(i)].insert(0, val_entry)
                 
                 if(i==6 or i==11):
@@ -208,7 +215,7 @@ def criaRegistro(root, *ent):
 def geraGrafico():
     if(os.path.exists('dataframe.csv')==True):
         
-        coluna = tk.simpledialog.askstring('Coluna do Gráfico', 'Digite a Coluna de Base')
+        coluna = tk.simpledialog.askstring('Coluna do Gráfico', 'Digite a Coluna Referência')
         df = ler_df()
         
         df[coluna].value_counts().plot.pie(title='Gráfico por '+coluna, autopct="%.1f%%")
@@ -224,10 +231,10 @@ def geraGrafico():
         p_y = int(altura_window/2) - int(j_y/2)
         geometry = str(j_x)+'x'+str(j_y)+'+'+str(p_x)+'+'+str(p_y)
         window_geraGrafico.geometry(geometry)
-        grafico = tk.PhotoImage(file=diretorio+'grafico1.png')
+        grafico = tk.PhotoImage('grafico1.png')
         label_grafico = tk.Label(window_geraGrafico, image=grafico)
         label_grafico.place(relx=0.5,rely=0.5,anchor='center')
-        
+        alertBox('Gráfico Gerado')        
     else:
         alertBox('Não há dataframe criado!')        
 
@@ -238,6 +245,7 @@ def mostraDf():
         j_y = 480
         i = 0
         n = 0
+        r = 0
         df = ler_df()
         window_mostraDf = tk.Toplevel()
         window_mostraDf.title('TableFrame')
@@ -248,11 +256,22 @@ def mostraDf():
         p_y = int(altura_window/2) - int(j_y/2)
         geometry = str(j_x)+'x'+str(j_y)+'+'+str(p_x)+'+'+str(p_y)
         window_mostraDf.geometry(geometry)
+
+        #Scroll X & Y TreeView DataFrame
+        scrollbarY = tk.Scrollbar(window_mostraDf, orient="vertical")
+        scrollbarY.pack(side = tk.RIGHT, fill = tk.Y)
+        scrollbarX = tk.Scrollbar(window_mostraDf, orient="horizontal")
+        scrollbarX.pack(side = tk.BOTTOM, fill = tk.X)
         list_columns = []
         for col in df.columns:
             n+=1
             list_columns.append(n)
-        tree_view = ttk.Treeview(window_mostraDf, show='headings', height='6')
+        for df.loc[i].tolist in range(0,df.shape[0]):
+            r+=1
+        tree_view = ttk.Treeview(window_mostraDf, show='headings', height=1, yscrollcommand = scrollbarY.set, xscrollcommand = scrollbarX.set)
+        if(r>0):
+            tree_view['height']=r
+        print(r)
         tree_view['columns']=list_columns
         for coluna in df.columns:
             i+=1
@@ -261,9 +280,22 @@ def mostraDf():
         for df.loc[i].tolist in range(0,df.shape[0]):
             tree_view.insert('', 'end',values=df.loc[i].tolist())
             i+=1
-        tree_view.pack()
+        tree_view.pack( side = tk.LEFT , fill=tk.BOTH)
+        scrollbarY.config( command = tree_view.yview)
+        scrollbarX.config( command = tree_view.xview)
     else:
         alertBox('Não há dataframe criado!')
+
+
+def excluirDf():
+    if tk.messagebox.askyesno('Excluir Dataframe', 'Reseja realmente excluir o dataframe?'):
+        if os.path.exists("dataframe.csv"): 
+            os.remove("dataframe.csv") 
+            tk.messagebox.showwarning('Sim', 'Arquivo Excluído!')
+        else: 
+            alertBox('Não há dataframe existente')
+    else:
+         tk.messagebox.showinfo('Não', 'Operação Cancelada')
 
 def sair():
     window.destroy()
@@ -284,19 +316,39 @@ geometria = str(janela_x)+'x'+str(janela_y)+'+'+str(posx)+'+'+str(posy)
 
 window.geometry(geometria) #Definindo o Tamanho da Janela App
 window.resizable(True, True) # Definindo janela não redimensionável
+window.bind("<Escape>", (lambda event: sair()))
 
 label_title = tk.Label(window,text = window.title(),bg='#008de4',fg='#ffffff', font='Arial 16',bd=0)
-img = tk.PhotoImage(file=diretorio+'icon2.png')
+img = tk.PhotoImage(file=diretorio+'icon.png')
 label_img = tk.Label(window, image=img, bd=0)
-FrameButtons = tk.LabelFrame(bd=0,bg='#ffffff')
+FrameButtons = tk.LabelFrame(bd=0)
 
-#buttons
-bt_criaDf = tk.Button(FrameButtons, text='Criar Base de Dados', bg='#ffffff', fg='#008de4', font='Arial 14',padx=150,bd=0, command=janelaCriaDf)
-bt_mostraDf = tk.Button(FrameButtons, text='Mostrar Dados', bg='#ffffff', fg='#008de4', font='Arial 14',padx=150,bd=0, command=mostraDf)
-bt_addDados = tk.Button(FrameButtons, text='Adicionar Dados', bg='#ffffff', fg='#008de4', font='Arial 14',padx=150,bd=0, command=janelaAdiconaRegistro)
-bt_geraGrafico = tk.Button(FrameButtons, text='Gerar Gráfico', bg='#ffffff', fg='#008de4', font='Arial 14',padx=150,bd=0, command=geraGrafico)
-bt_sair = tk.Button(FrameButtons, text='Sair', bg='#ffffff', fg='#008de4', font='Arial 14',padx=150,bd=0, command=sair)
-#positions buttons
+#MenuBar
+menubar = tk.Menu(window)
+filemenu = tk.Menu(menubar, tearoff=0)
+filemenu.add_command(label="Novo CSV", command=lambda:janelaCriaDf())
+filemenu.add_command(label="Mostrar CSV", command=lambda:mostraDf())
+filemenu.add_command(label="Adicionar Registro", command=lambda:janelaAdiconaRegistro())
+filemenu.add_command(label="Excluir CSV", command=lambda:excluirDf())
+filemenu.add_separator()
+filemenu.add_command(label="Sair", command=lambda:sair())
+menubar.add_cascade(label="Arquivo", menu=filemenu)
+
+helpmenu = tk.Menu(menubar, tearoff=0)
+helpmenu.add_command(label="Sobre")
+menubar.add_cascade(label="Ajuda", menu=helpmenu)
+window.config(menu=menubar)
+
+#Buttons
+bt_criaDf = tk.Button(FrameButtons, text='Criar Base de Dados', fg='#008de4', font='Arial 14',padx=150,bd=0, command=janelaCriaDf)
+bt_mostraDf = tk.Button(FrameButtons, text='Mostrar Dados', fg='#008de4', font='Arial 14',padx=150,bd=0, command=mostraDf)
+bt_mostraDf.bind("<Return>", (lambda event: mostraDf()))
+bt_addDados = tk.Button(FrameButtons, text='Adicionar Dados', fg='#008de4', font='Arial 14',padx=150,bd=0, command=janelaAdiconaRegistro)
+bt_addDados.bind("<Return>", (lambda event: janelaAdiconaRegistro()))
+bt_geraGrafico = tk.Button(FrameButtons, text='Gerar Gráfico', fg='#008de4', font='Arial 14',padx=150,bd=0, command=geraGrafico)
+bt_sair = tk.Button(FrameButtons, text='Sair', fg='#008de4', font='Arial 14',padx=150,bd=0, command=sair)
+bt_sair.bind("<Return>", (lambda event: sair()))
+#Positions buttons
 bt_criaDf.grid(row=0,column=0)
 bt_mostraDf.grid(row=1,column=0)
 bt_addDados.grid(row=2,column=0)
@@ -308,5 +360,6 @@ label_title.place(relx = 0.5,rely = 0.35,anchor = 'center')
 label_img.place(relx = 0.5,rely = 0.2,anchor = 'center')
 FrameButtons.place(relx = 0.5,rely = 0.7,anchor = 'center')
 
+sv_ttk.set_theme('light')
 
 window.mainloop() # Manter a janela sem fechar
